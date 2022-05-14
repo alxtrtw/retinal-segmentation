@@ -13,6 +13,6 @@ def get_image_paths(directory_path: str) -> List:
     return sorted(paths)
 
 
-def load_image(path: str) -> np.ndarray:
+def load_image(path: str) -> Image:
     return Image.open(path)
 
