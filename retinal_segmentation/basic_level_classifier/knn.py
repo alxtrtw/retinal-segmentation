@@ -1,33 +1,70 @@
 import numpy as np
 import cv2
+import os
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
 from typing import Tuple
 
-
+from retinal_segmentation.utils.data_loader import get_image_paths, load_image
 from retinal_segmentation.basic_level_classifier import \
     feature_extraction as ft_ext
 
 
-def slice_image(image: np.ndarray, size: int) -> list:
+def slice_image(image: np.ndarray, slice_size: int) -> list:
     width, height = image.shape
 
     slices = []
-    for i in range(height - size + 1):
-        for j in range(width - size + 1):
-            slices.append(image[i:i+size, j:j+size])
+    for i in range(height - slice_size + 1):
+        for j in range(width - slice_size + 1):
+            slices.append(image[i:i+slice_size, j:j+slice_size])
 
     return slices
 
 
-def get_slice_features(image_slice: np.ndarray) -> list:
+def get_list_slices(image_list: list, slice_size) -> list:
+    slices = []
+    for image in image_list:
+        image_slices = slice_image(image, slice_size)
+        for img in image_slices:
+            slices.append(img)
+    return slices
 
-    img_gray = cv2.cvtColor(image_slice, cv2.COLOR_BGR2GRAY)
 
-    contrast = ft_ext.get_contrast(img_gray)
+def load_sliced_images(
+        data_dir: str,
+        target_dir: str,
+        img_shape: Tuple[int, int] = (200, 200),
+        slice_size: int = 9)\
+        -> Tuple[list, list]:
 
-    hu_moments = ft_ext.get_hu_moments(img_gray)
+    data_paths, target_paths = get_image_paths(data_dir), get_image_paths(target_dir)
 
-    pass
+    data_images = [cv2.resize(load_image(path), img_shape) for path in data_paths]
+    data_slices = get_list_slices(data_images, slice_size)
 
+    target_images = [cv2.resize(load_image(path), img_shape) for path in target_paths]
+    target_slices = get_list_slices(target_images, slice_size)
+
+    return data_slices, target_slices
+
+
+def get_input_features(data_images: list) -> list:  # TODO
+    features = [ft_ext.get_features(image) for image in data_images]
+    return features
+
+
+def get_target_vals(target_images: list) -> list:  # TODO
+    vals = [ft_ext.get_center_value(image) for image in target_images]
+    return vals
+
+
+def init_knn_classifier(train_data, train_target) \
+        -> KNeighborsClassifier:  # TODO
+
+    classifier = KNeighborsClassifier(n_neighbors=2)
+    classifier.fit(train_data, train_target)
+
+    return classifier
 
 
 

@@ -7,6 +7,7 @@ from skimage.filters.edges import convolve
 from skimage.feature import canny
 from skimage.color import rgb2gray
 import cv2 as cv
+from PIL import ImageChops
 
 
 def extract_veins_sensitive(image: np.ndarray) -> np.ndarray:

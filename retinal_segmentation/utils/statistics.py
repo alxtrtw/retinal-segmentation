@@ -1,5 +1,4 @@
 from scipy.stats import gmean
-from statistics import mean
 import numpy as np
 from typing import Tuple
 
