@@ -13,6 +13,11 @@ def get_image_paths(directory_path: str) -> List:
     return sorted(paths)
 
 
-def load_image(path: str) -> Image:
-    return Image.open(path)
+def load_image(path: str, as_arr: bool = False) -> Image:
+    img = Image.open(path)
+    if as_arr:
+        return np.asarray(img)
+    else:
+        return img
+
 

@@ -3,6 +3,8 @@ import cv2
 from PIL import Image
 from typing import Tuple
 from skimage.feature import hog
+from skimage import color
+
 
 def image_to_array(image: Image) -> np.ndarray:
     return np.ndarray(image)
@@ -34,11 +36,12 @@ def split_rgb_image(image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarr
 
 
 def get_center_value(image: np.ndarray) -> float:  # TODO
-    if image.shape[0] != image.shape[1] or image.shape[0]%2 == 0:
+    n = image.size
+    if n % 2 == 0:
         raise Exception("Can't get image center value!")
 
-    x = np.ceil(image.shape[0]/2)
-    val = image[x, x]
+    val = np.take(image, n // 2)
+    val = np.heaviside(val, 0)
     return val
 
 
@@ -48,10 +51,14 @@ def get_hog(image: np.ndarray) -> np.ndarray:
     return hog_image
 
 
-def get_features(image: np.ndarray) -> list:  # TODO
+def get_features(image: np.ndarray) -> np.ndarray:  # TODO
 
-    features = get_hog(image)
+    image_gray = color.rgb2gray(image)
 
+    # features = image_gray.reshape((1, image_gray.size))
+    features = image_gray.flatten()
+
+    # features = get_hog(image_gray)
     # img_gray = cv2.cvtColor(image_slice, cv2.COLOR_BGR2GRAY)
     #
     # contrast = ft_ext.get_contrast(img_gray)

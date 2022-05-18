@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple
 
 
-def get_statistics(image: np.ndarrray, mask: np.ndarray) -> Tuple[int, int, int, int]:
+def get_mask_statistics(image: np.ndarrray, mask: np.ndarray) -> Tuple[int, int, int, int]:
     """
 
     :param image:
@@ -41,12 +41,12 @@ def get_metrics(image: np.ndarrray, mask: np.ndarrray, thresh: float = 0.1) -> T
     img_bool = image > thresh
     mask_bool = mask > thresh
 
-    tp, fp, fn, tn = get_statistics(img_bool, mask_bool)
+    tp, fp, fn, tn = get_mask_statistics(img_bool, mask_bool)
 
     accuracy = (tp + tn) / (tn + fn + tp + fp)
     sensitivity = tp / (tp + fn)
     specificity = tn / (fp + tn)
-    geometric = float(gmean([sensitivity, specificity])) # TODO check
+    geometric = float(gmean([sensitivity, specificity]))
 
     return accuracy, sensitivity, specificity, geometric
 
