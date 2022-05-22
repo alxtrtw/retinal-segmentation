@@ -29,7 +29,7 @@ def get_mask_statistics(image: np.ndarrray, mask: np.ndarray) -> Tuple[int, int,
     return tp, fp, fn, tn
 
 
-def get_metrics(image: np.ndarrray, mask: np.ndarrray, thresh: float = 0.1) -> Tuple[float, float,
+def get_metrics(image: np.ndarrray, mask: np.ndarray, thresh: float = 0.1) -> Tuple[float, float,
                                                                                      float, float]:
     """
 

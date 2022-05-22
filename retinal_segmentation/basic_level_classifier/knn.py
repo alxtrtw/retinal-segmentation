@@ -40,12 +40,26 @@ def slice_image_2(image: np.ndarray, slice_size: int) -> list:
 
     return slices
 
+def slice_image_3(image: np.ndarray, slice_size: int) -> list:
+    width, height = image.shape[0], image.shape[1]
+    offset = slice_size//2
+    sliced_image = np.zeros((width+2*offset, height+2*offset))
+    sliced_image[offset:height+offset, offset:width+offset] = image
+    slices = []
+    for i in range(height):
+        for j in range(width):
+            img_temp = sliced_image[i:i+slice_size, j:j+slice_size]
+            slices.append(img_temp)
+    return slices
+
+
+
 
 def get_list_slices(image_list: list, slice_size) -> list:
     slices = []
     for image in image_list:
-        image_slices = slice_image(image, slice_size)
-        # image_slices = slice_image_2(image, slice_size)
+        # image_slices = slice_image(image, slice_size)
+        image_slices = slice_image_3(image, slice_size)
         for img in image_slices:
             slices.append(img)
     return slices
