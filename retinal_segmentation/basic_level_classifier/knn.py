@@ -12,38 +12,13 @@ from retinal_segmentation.basic_level_classifier import \
 
 def slice_image(image: np.ndarray, slice_size: int) -> list:
     width, height = image.shape[0], image.shape[1]
-
-    slices = []
-    for i in range(height - slice_size + 1):
-        for j in range(width - slice_size + 1):
-            slices.append(image[i:i+slice_size, j:j+slice_size])
-
-    return slices
-
-
-def slice_image_2(image: np.ndarray, slice_size: int) -> list:
-    width, height = image.shape[0], image.shape[1]
-
-    new_width, new_height = width + slice_size * 2, height + slice_size * 2
+    offset = slice_size//2
 
     if len(image.shape) == 3:
-        new_img = np.zeros((new_width, new_height, 3))
+        sliced_image = np.zeros((width+2*offset, height+2*offset, 3))
     else:
-        new_img = np.zeros((new_width, new_height))
+        sliced_image = np.zeros((width+2*offset, height+2*offset))
 
-    new_img[slice_size:-slice_size, slice_size:-slice_size] = image
-
-    slices = []
-    for i in range(slice_size - 1, height + 1):
-        for j in range(slice_size - 1, width + 1):
-            slices.append(image[i:i + slice_size, j:j + slice_size])
-
-    return slices
-
-def slice_image_3(image: np.ndarray, slice_size: int) -> list:
-    width, height = image.shape[0], image.shape[1]
-    offset = slice_size//2
-    sliced_image = np.zeros((width+2*offset, height+2*offset))
     sliced_image[offset:height+offset, offset:width+offset] = image
     slices = []
     for i in range(height):
@@ -53,13 +28,10 @@ def slice_image_3(image: np.ndarray, slice_size: int) -> list:
     return slices
 
 
-
-
 def get_list_slices(image_list: list, slice_size) -> list:
     slices = []
     for image in image_list:
-        # image_slices = slice_image(image, slice_size)
-        image_slices = slice_image_3(image, slice_size)
+        image_slices = slice_image(image, slice_size)
         for img in image_slices:
             slices.append(img)
     return slices
